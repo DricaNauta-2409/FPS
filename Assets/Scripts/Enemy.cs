@@ -8,12 +8,9 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform player;
-
-
-   
     [SerializeField] private Transform firepoint;
     [SerializeField] private GameObject Bullet;
-
+    [SerializeField] private Animator animator;
     [UnitHeaderInspectable("Ranges")]
     [SerializeField] private float chaseRange = 10f;
     [SerializeField] private float attackRange = 10f;
@@ -21,6 +18,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float timeBetweenAttacks = 1f;
 
     private float nextShootTime;
+    private const string isChasing = "isChasing";
+    private const string isAttacking = "isShooting";
 
    
     private void Update()
@@ -28,7 +27,7 @@ public class Enemy : MonoBehaviour
         float distance = Vector3.Distance(transform.position, player.position);
         if (distance <= chaseRange)
         {
-            Chase();
+            Attack();
         }
         else if (distance <= attackRange)
         {
@@ -44,6 +43,7 @@ public class Enemy : MonoBehaviour
     {
         agent.ResetPath();
         LookAtPlayer();
+        SetAnimation(false, true); 
 
         if (Time.time >= nextShootTime)
         {
@@ -60,13 +60,21 @@ public class Enemy : MonoBehaviour
         transform.LookAt(target);
     }
 
+    private void SetAnimation(bool chasing, bool sooting)
+    {
+        animator.SetBool(isChasing, chasing);
+        animator.SetBool(isAttacking, sooting);
+    }
+
     private void Idle()
     {
         agent.ResetPath();
+        SetAnimation(false, false);
     }
     private void Chase()
     {
         agent.SetDestination(player.position);
+        SetAnimation(true, false);
     }
     private void OnDrawGizmosSelected()
     {
