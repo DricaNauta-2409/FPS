@@ -18,13 +18,17 @@ public class Gun : MonoBehaviour
 
     [SerializeField] private float reloadTime;
     private bool isRealoding;
-    
+
     [SerializeField] private float aimDistance = 100f;
     [SerializeField] private float minAimDistance = 2f;
     [SerializeField] private LayerMask aimMask;
 
     [SerializeField] private Camera fpsCam;
     [SerializeField] private GameObject muzzlePrefab;
+
+    [SerializeField] private AudioClip bulletSound;
+    [SerializeField] private float bulletSoundVolume;
+    [SerializeField] private Vector2 shootPitch;
 
     
     private void Awake()
@@ -79,6 +83,9 @@ public class Gun : MonoBehaviour
         bulletsLeft--;
         nextShootTime = Time.time + timeBetweenShots;
         UpdateText();
+
+        float pith = Random.Range(shootPitch.x, shootPitch.y);
+        AudioManager.Instance.PlaySFX(bulletSound, bulletSoundVolume, pith);
     }
 
     private void UpdateText()
